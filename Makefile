@@ -11,6 +11,12 @@ test:
 	go mod tidy
 	go test -v .
 
+docs:
+	go get -v github.com/swaggo/swag/cmd/swag
+	go get -u github.com/arsmn/fiber-swagger/v2
+	go mod vendor -v
+	swag init -g main.go --output docs --parseDependency --parseInternal
+
 #################################################################
 ####################### When using Docker #######################
 #################################################################

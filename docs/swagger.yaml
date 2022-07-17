@@ -1,0 +1,135 @@
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  model.Flight:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      endTime:
+        type: string
+      id:
+        type: string
+      lat:
+        type: number
+      lng:
+        type: number
+      robotId:
+        type: string
+      startTime:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Robot:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      generation:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/robots:
+    get:
+      consumes:
+      - application/json
+      description: Get all existing robots
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Robot'
+            type: array
+      tags:
+      - Robots
+    post:
+      consumes:
+      - application/json
+      description: Create a robot
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Robot'
+      tags:
+      - Robots
+  /api/robots/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one robot by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Robot'
+      tags:
+      - Robot
+  /api/v1/flights:
+    get:
+      consumes:
+      - application/json
+      description: Get all existing flights
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Flight'
+            type: array
+      tags:
+      - Flights
+    post:
+      consumes:
+      - application/json
+      description: Create a flight
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Flight'
+      tags:
+      - Flights
+  /api/v1/flights/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one flight by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Flight'
+      tags:
+      - Flight
+swagger: "2.0"
