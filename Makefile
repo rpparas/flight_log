@@ -8,4 +8,5 @@ watch:
 	reflex -s -r '\.go$$' make run
 
 test:
+	go mod tidy
 	go test -v .
