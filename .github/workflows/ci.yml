@@ -1,0 +1,20 @@
+name: CI - Build & Test
+on:
+  pull_request:
+    branches: [ master ]
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_test_golang:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Run unit tests via Docker container
+      run: |
+        make test-docker-image
