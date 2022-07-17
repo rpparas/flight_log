@@ -34,7 +34,7 @@ func GetFlights(c *fiber.Ctx) error {
 
 	// If no flights is present return no content
 	if len(flights) == 0 {
-		println("------------------------------------------------------------")
+		// TODO: Determine appropriate error code, 204 or 404 instead of 200
 		return c.Status(200).JSON(fiber.Map{"status": "no content", "message": "No flights present", "data": nil})
 	}
 
@@ -107,6 +107,7 @@ func GetFlight(c *fiber.Ctx) error {
 
 	// If no such flights present return an error
 	if flights.ID == uuid.Nil {
+		// TODO: Determine appropriate error code, 204 or 404 instead of 200
 		return c.Status(200).JSON(fiber.Map{"status": "no content", "message": "No flight found", "data": nil})
 	}
 

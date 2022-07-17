@@ -18,15 +18,13 @@ func GetRobots(c *fiber.Ctx) error {
 	db := database.DB
 	var robots []model.Robot
 
-	// find all robots in the database
 	db.Find(&robots)
 
-	// If no robots is present return an error
 	if len(robots) == 0 {
+		// TODO: Determine appropriate error code, 204 or 404 instead of 200
 		return c.Status(200).JSON(fiber.Map{"status": "no content", "message": "No robots present", "data": nil})
 	}
 
-	// Else return robots
 	return c.JSON(fiber.Map{"status": "success", "message": "Robots Found", "data": robots})
 }
 
@@ -69,17 +67,14 @@ func GetRobot(c *fiber.Ctx) error {
 	db := database.DB
 	var robots model.Robot
 
-	// Read the param robotsId
 	id := c.Params("robotsId")
 
-	// Find the robots with the given Id
 	db.Find(&robots, "id = ?", id)
 
-	// If no such robots present return an error
 	if robots.ID == uuid.Nil {
+		// TODO: Determine appropriate error code, 204 or 404 instead of 200
 		return c.Status(200).JSON(fiber.Map{"status": "no content", "message": "No robots present", "data": nil})
 	}
 
-	// Return the robots with the Id
 	return c.JSON(fiber.Map{"status": "success", "message": "Robots Found", "data": robots})
 }

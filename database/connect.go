@@ -19,7 +19,7 @@ func ConnectDB() {
 	port, err := strconv.ParseUint(p, 10, 32)
 
 	if err != nil {
-		log.Println("Idiot")
+		log.Println("Invalid port")
 	}
 
 	// Connection URL to connect to Postgres Database
@@ -31,7 +31,7 @@ func ConnectDB() {
 		panic("Failed to connect to database")
 	}
 
-	fmt.Println("Connection opened to Database")
+	fmt.Println("Connection opened to database")
 
 	// Migrate the database to the latest schema
 	DB.AutoMigrate(&model.Flight{})
