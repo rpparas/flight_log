@@ -15,9 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Login to Github Repository to pull cache
-      run: echo ${GITHUB_TOKEN} | docker login docker.pkg.github.com -u $GITHUB_ACTOR --password-stdin
-
     - name: Run unit tests baremetal
       run: |
         make test
