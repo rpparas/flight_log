@@ -29,7 +29,7 @@ func TestIndexRoute(t *testing.T) {
 			route:         "/",
 			expectedError: false,
 			expectedCode:  200,
-			expectedBody:  "OK",
+			expectedBody:  "TODO: Add documentation how to use Drone Log API",
 		},
 		{
 			description:   "non existing route",

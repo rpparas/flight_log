@@ -8,4 +8,4 @@ watch:
 	reflex -s -r '\.go$$' make run
 
 test:
-	go test -v ./router/...
+	go test -v .
