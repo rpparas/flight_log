@@ -9,9 +9,6 @@ import (
 func Setup() *fiber.App {
 	app := fiber.New()
 
-	// Connect to the Database
-	database.ConnectDB()
-
 	// Setup the router
 	router.SetupRoutes(app)
 	return app
@@ -20,5 +17,9 @@ func Setup() *fiber.App {
 func main() {
 	// Start a new REST API app using fiber as framework
 	app := Setup()
+
+	// Connect to the Database
+	database.ConnectDB()
+
 	app.Listen(":8000")
 }
