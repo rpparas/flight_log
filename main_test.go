@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -78,6 +80,10 @@ func T11estIndexRoute(t *testing.T) {
 	}
 }
 
+type Result struct {
+	Message string
+}
+
 func TestGetFlights(t *testing.T) {
 	tests := []struct {
 		description string
@@ -86,16 +92,16 @@ func TestGetFlights(t *testing.T) {
 		route string
 
 		// Expected output
-		expectedError bool
-		expectedCode  int
-		expectedBody  string
+		expectedError   bool
+		expectedCode    int
+		expectedMessage string
 	}{
 		{
-			description:   "GET Flights route",
-			route:         "/api/v1/flights",
-			expectedError: false,
-			expectedCode:  200,
-			expectedBody:  "TODO: Add documentation how to use Drone Log API",
+			description:     "GET Flights route",
+			route:           "/api/v1/flights",
+			expectedError:   false,
+			expectedCode:    200,
+			expectedMessage: "Flights Found",
 		},
 	}
 
@@ -115,8 +121,6 @@ func TestGetFlights(t *testing.T) {
 			nil,
 		)
 
-		// Perform the request plain with the app.
-		// The -1 disables request latency.
 		res, err := app.Test(req, -1)
 
 		// verify that no error occured, that is not expected
@@ -133,12 +137,25 @@ func TestGetFlights(t *testing.T) {
 
 		// Read the response body
 		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		// parse it as JSON
+
+		// decoding country1 struct
+		// from json format
+		var apiResult Result
+		err = json.Unmarshal(body, &apiResult)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 		// Reading the response body should work everytime, such that
 		// the err variable should be nil
 		assert.Nilf(t, err, test.description)
 
 		// Verify, that the reponse body equals the expected body
-		assert.Equalf(t, test.expectedBody, string(body), test.description)
+		assert.Equalf(t, test.expectedMessage, apiResult.Message, test.description)
 	}
 }
