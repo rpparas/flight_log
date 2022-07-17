@@ -6,8 +6,7 @@ import (
 	"github.com/rpparas/flight_log/router"
 )
 
-func main() {
-	// Start a new fiber app
+func Setup() *fiber.App {
 	app := fiber.New()
 
 	// Connect to the Database
@@ -15,7 +14,11 @@ func main() {
 
 	// Setup the router
 	router.SetupRoutes(app)
+	return app
+}
 
-	// Listen on PORT 3000
+func main() {
+	// Start a new REST API app using fiber as framework
+	app := Setup()
 	app.Listen(":8000")
 }
