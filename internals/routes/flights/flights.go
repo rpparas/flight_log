@@ -6,14 +6,10 @@ import (
 )
 
 func SetupApiRoutes(router fiber.Router) {
+	// Endpoints for flights
 	flights := router.Group("/flights")
-
-	// Create a single Flight
 	flights.Post("/", flightsHandler.CreateFlight)
-
-	// Read all Flights
 	flights.Get("/", flightsHandler.GetFlights)
-
-	// Read single Flight
 	flights.Get("/:flightId", flightsHandler.GetFlight)
+
 }
