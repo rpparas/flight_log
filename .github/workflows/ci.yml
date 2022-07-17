@@ -15,6 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Run unit tests baremetal
+    - name: Run unit tests via Docker image
       run: |
         make test
