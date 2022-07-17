@@ -1,6 +1,8 @@
 package flightsHandler
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/rpparas/flight_log/database"
@@ -13,21 +15,49 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200 {array} model.Flight
-// @router /api/flights [get]
+// @router /api/v1/flights [get]
 func GetFlights(c *fiber.Ctx) error {
 	db := database.DB
 	var flights []model.Flight
 
-	// find all flights in the database
-	db.Find(&flights)
+	generation := parseQueryGeneration(c)
+	// TODO: ensure that generation is an int with valid range
+	if generation < 0 {
+		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`generation` is not a valid numeric value [1 to 26]", "data": nil})
+	} else if generation > 0 {
+		db.Model(&model.Flight{}).Joins("left join robots on flights.robot_id = robots.id").Where("generation = ?", generation).Scan(&flights)
 
-	// If no flights is present return an error
-	if len(flights) == 0 {
-		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No flights present", "data": nil})
+	} else {
+		// if no query string is declared, then search everything
+		db.Find(&flights)
 	}
 
-	// Else return flights
+	// If no flights is present return no content
+	if len(flights) == 0 {
+		println("------------------------------------------------------------")
+		return c.Status(200).JSON(fiber.Map{"status": "no content", "message": "No flights present", "data": nil})
+	}
+
 	return c.JSON(fiber.Map{"status": "success", "message": "Flights Found", "data": flights})
+}
+
+func parseQueryGeneration(c *fiber.Ctx) int {
+	// returns -1 if invalid, 0 if not applicable, or 1-26 if
+	generation := c.Query("generation")
+	if len(generation) == 0 {
+		return 0
+	}
+
+	intVar, err := strconv.Atoi(generation)
+	if err != nil {
+		return -1
+	}
+
+	// TODO: figure out how to implement this via router as regex rule
+	if intVar < 0 || intVar > 26 {
+		return -1
+	}
+	return intVar
 }
 
 // CreateFlight func create a flight
@@ -36,7 +66,7 @@ func GetFlights(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Success 200 {object} model.Flight
-// @router /api/flights [post]
+// @router /api/v1/flights [post]
 func CreateFlight(c *fiber.Ctx) error {
 	db := database.DB
 	flights := new(model.Flight)
@@ -59,12 +89,12 @@ func CreateFlight(c *fiber.Ctx) error {
 }
 
 // GetFlight func one flight by ID
-// @Description Get one flights by ID
+// @Description Get one flight by ID
 // @Tags Flight
 // @Accept json
 // @Produce json
 // @Success 200 {object} model.Flight
-// @router /api/flights/{id} [get]
+// @router /api/v1/flights/{id} [get]
 func GetFlight(c *fiber.Ctx) error {
 	db := database.DB
 	var flights model.Flight
@@ -77,7 +107,7 @@ func GetFlight(c *fiber.Ctx) error {
 
 	// If no such flights present return an error
 	if flights.ID == uuid.Nil {
-		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No flights present", "data": nil})
+		return c.Status(200).JSON(fiber.Map{"status": "no content", "message": "No flight found", "data": nil})
 	}
 
 	// Return the flights with the Id

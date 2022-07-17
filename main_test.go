@@ -11,14 +11,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func T11estIndexRoute(t *testing.T) {
+func TestIndexRoute(t *testing.T) {
 	tests := []struct {
-		description string
-
-		// Test input
-		route string
-
-		// Expected output
+		description   string
+		route         string
 		expectedError bool
 		expectedCode  int
 		expectedBody  string
@@ -39,13 +35,9 @@ func T11estIndexRoute(t *testing.T) {
 		},
 	}
 
-	// Setup the app as it is done in the main function
 	app := Setup()
 
-	// Iterate through test single test cases
 	for _, test := range tests {
-		// Create a new http request with the route
-		// from the test case
 		req, _ := http.NewRequest(
 			"GET",
 			test.route,
@@ -97,11 +89,18 @@ func TestGetFlights(t *testing.T) {
 		expectedMessage string
 	}{
 		{
-			description:     "GET Flights route",
+			description:     "GET Flights route with at least 1 result",
 			route:           "/api/v1/flights",
 			expectedError:   false,
 			expectedCode:    200,
 			expectedMessage: "Flights Found",
+		},
+		{
+			description:     "GET Flights route without any result",
+			route:           "/api/v1/flights?generation=26",
+			expectedError:   false,
+			expectedCode:    200,
+			expectedMessage: "No flights present",
 		},
 	}
 
@@ -113,8 +112,6 @@ func TestGetFlights(t *testing.T) {
 
 	// Iterate through test single test cases
 	for _, test := range tests {
-		// Create a new http request with the route
-		// from the test case
 		req, _ := http.NewRequest(
 			"GET",
 			test.route,
@@ -141,21 +138,15 @@ func TestGetFlights(t *testing.T) {
 			fmt.Println(err)
 		}
 
-		// parse it as JSON
-
-		// decoding country1 struct
-		// from json format
+		// parse api result as JSON
 		var apiResult Result
 		err = json.Unmarshal(body, &apiResult)
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		// Reading the response body should work everytime, such that
-		// the err variable should be nil
 		assert.Nilf(t, err, test.description)
 
-		// Verify, that the reponse body equals the expected body
 		assert.Equalf(t, test.expectedMessage, apiResult.Message, test.description)
 	}
 }

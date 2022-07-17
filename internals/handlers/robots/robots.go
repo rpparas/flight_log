@@ -23,7 +23,7 @@ func GetRobots(c *fiber.Ctx) error {
 
 	// If no robots is present return an error
 	if len(robots) == 0 {
-		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No robots present", "data": nil})
+		return c.Status(200).JSON(fiber.Map{"status": "no content", "message": "No robots present", "data": nil})
 	}
 
 	// Else return robots
@@ -59,7 +59,7 @@ func CreateRobot(c *fiber.Ctx) error {
 }
 
 // GetRobot func one robot by ID
-// @Description Get one robots by ID
+// @Description Get one robot by ID
 // @Tags Robot
 // @Accept json
 // @Produce json
@@ -77,7 +77,7 @@ func GetRobot(c *fiber.Ctx) error {
 
 	// If no such robots present return an error
 	if robots.ID == uuid.Nil {
-		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No robots present", "data": nil})
+		return c.Status(200).JSON(fiber.Map{"status": "no content", "message": "No robots present", "data": nil})
 	}
 
 	// Return the robots with the Id
