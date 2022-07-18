@@ -22,15 +22,18 @@ func GetFlights(c *fiber.Ctx) error {
 	var flights []model.Flight
 
 	generation := parseQueryGeneration(c)
-	dateFrom, err := parseQueryDateTime(c, "from")
-	// dateTo, err := parseQueryDateTime(c, "to")
+	if generation == -1 {
+		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`generation` is not a valid numeric value [1 to 26]", "data": nil})
+	}
 
+	dateFrom, err := parseQueryDateTime(c, "from")
 	if err != nil {
 		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Invalid date `from` provided. See RFC3339 for valid format", "data": nil})
 	}
 
-	if generation == -1 {
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`generation` is not a valid numeric value [1 to 26]", "data": nil})
+	dateTo, err := parseQueryDateTime(c, "to")
+	if err != nil {
+		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Invalid date `to` provided. See RFC3339 for valid format", "data": nil})
 	}
 
 	// use scopes to chain conditions based on query strings in URL
@@ -40,6 +43,10 @@ func GetFlights(c *fiber.Ctx) error {
 
 	if !dateFrom.IsZero() {
 		db = db.Scopes(StartingFrom(dateFrom))
+	}
+
+	if !dateTo.IsZero() {
+		db = db.Scopes(EndingIn(dateTo))
 	}
 
 	// even if no query string is declared, then search everything

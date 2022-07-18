@@ -17,3 +17,9 @@ func StartingFrom(dateFrom time.Time) func(db *gorm.DB) *gorm.DB {
 		return db.Where("start_time >= ?", dateFrom)
 	}
 }
+
+func EndingIn(dateTo time.Time) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("end_time <= ?", dateTo)
+	}
+}

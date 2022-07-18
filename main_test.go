@@ -138,8 +138,8 @@ func TestGetFlights(t *testing.T) {
 			expectedMessage: "Invalid date `from` provided. See RFC3339 for valid format",
 		},
 		{
-			description:     "GET Flights with BOTH `from` date",
-			route:           "/api/v1/flights?generation=1&from=2018-01-01T00:00:00Z",
+			description:     "GET Flights with generation, `from` date & to `to` date",
+			route:           "/api/v1/flights?generation=1&from=2018-01-01T00:00:00Z&to=2023-07-03T00:00:00Z",
 			expectedError:   false,
 			expectedCode:    200,
 			expectedMessage: "Flights Found",
