@@ -21,8 +21,7 @@ func GetFlights(c *fiber.Ctx) error {
 	var flights []model.Flight
 
 	generation := parseQueryGeneration(c)
-	// TODO: ensure that generation is an int with valid range
-	if generation < 0 {
+	if generation == -1 {
 		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`generation` is not a valid numeric value [1 to 26]", "data": nil})
 	} else if generation > 0 {
 		db.Model(&model.Flight{}).Joins("left join robots on flights.robot_id = robots.id").Where("generation = ?", generation).Scan(&flights)
@@ -42,22 +41,26 @@ func GetFlights(c *fiber.Ctx) error {
 }
 
 func parseQueryGeneration(c *fiber.Ctx) int {
-	// returns -1 if invalid, 0 if not applicable, or 1-26 if
+	// Parses generation number if supplied in the URL as a query parameter
+	// returns -1 if invalid
+	// returns -2 if ignore
+	// returns valid generation [1 to 26] if valid
+
 	generation := c.Query("generation")
 	if len(generation) == 0 {
-		return 0
+		return -2
 	}
 
-	intVar, err := strconv.Atoi(generation)
+	intVal, err := strconv.Atoi(generation)
 	if err != nil {
 		return -1
 	}
 
 	// TODO: figure out how to implement this via router as regex rule
-	if intVar < 0 || intVar > 26 {
+	if intVal < 1 || intVal > 26 {
 		return -1
 	}
-	return intVar
+	return intVal
 }
 
 // CreateFlight func create a flight

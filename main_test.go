@@ -89,18 +89,39 @@ func TestGetFlights(t *testing.T) {
 		expectedMessage string
 	}{
 		{
-			description:     "GET Flights route with at least 1 result",
+			description:     "GET Flights with at least 1 result",
 			route:           "/api/v1/flights",
 			expectedError:   false,
 			expectedCode:    200,
 			expectedMessage: "Flights Found",
 		},
 		{
-			description:     "GET Flights route without any result",
+			description:     "GET Flights for robot generation without any result",
 			route:           "/api/v1/flights?generation=26",
 			expectedError:   false,
 			expectedCode:    200,
 			expectedMessage: "No flights present",
+		},
+		{
+			description:     "GET Flights for with invalid generation",
+			route:           "/api/v1/flights?generation=0",
+			expectedError:   false,
+			expectedCode:    422,
+			expectedMessage: "`generation` is not a valid numeric value [1 to 26]",
+		},
+		{
+			description:     "GET Flights for with invalid generation",
+			route:           "/api/v1/flights?generation=99999",
+			expectedError:   false,
+			expectedCode:    422,
+			expectedMessage: "`generation` is not a valid numeric value [1 to 26]",
+		},
+		{
+			description:     "GET Flights for with invalid generation",
+			route:           "/api/v1/flights?generation=not-a-valid-value",
+			expectedError:   false,
+			expectedCode:    422,
+			expectedMessage: "`generation` is not a valid numeric value [1 to 26]",
 		},
 	}
 
