@@ -137,6 +137,13 @@ func TestGetFlights(t *testing.T) {
 			expectedCode:    422,
 			expectedMessage: "Invalid date `from` provided. See RFC3339 for valid format",
 		},
+		{
+			description:     "GET Flights with BOTH `from` date",
+			route:           "/api/v1/flights?generation=1&from=2018-01-01T00:00:00Z",
+			expectedError:   false,
+			expectedCode:    200,
+			expectedMessage: "Flights Found",
+		},
 	}
 
 	// Connect to the Database

@@ -23,6 +23,8 @@ func GetFlights(c *fiber.Ctx) error {
 
 	generation := parseQueryGeneration(c)
 	dateFrom, err := parseQueryDateTime(c, "from")
+	// dateTo, err := parseQueryDateTime(c, "to")
+
 	if err != nil {
 		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Invalid date `from` provided. See RFC3339 for valid format", "data": nil})
 	}
@@ -31,15 +33,17 @@ func GetFlights(c *fiber.Ctx) error {
 		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`generation` is not a valid numeric value [1 to 26]", "data": nil})
 	}
 
-	// TODO: figure out how to chain these queries
+	// use scopes to chain conditions based on query strings in URL
 	if generation > 0 {
-		db.Model(&model.Flight{}).Joins("left join robots on flights.robot_id = robots.id").Where("generation = ?", generation).Scan(&flights)
-	} else if !dateFrom.IsZero() {
-		db.Model(&model.Flight{}).Where("start_time >= ?", dateFrom).Scan(&flights)
-	} else {
-		// if no query string is declared, then search everything
-		db.Find(&flights)
+		db = db.Scopes(GenerationEquals(generation))
 	}
+
+	if !dateFrom.IsZero() {
+		db = db.Scopes(StartingFrom(dateFrom))
+	}
+
+	// even if no query string is declared, then search everything
+	db.Debug().Find(&flights)
 
 	// If no flights is present return no content
 	if len(flights) == 0 {
