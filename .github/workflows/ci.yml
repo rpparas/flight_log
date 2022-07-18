@@ -15,17 +15,24 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Start Postgres DB
-      working-directory: ./dockerfiles/postgres
-      run: |
-        make build && make run-ci
-        sleep 10
+    # - name: Start Postgres DB
+    #   working-directory: ./dockerfiles/postgres
+    #   run: |
+    #     make build && make run-ci
+    #     sleep 10
 
-    - name: Fill DB with some data
-      run: |
-        docker ps
-        docker logs postgres 
-        make restore-db
+    # - name: Fill DB with some data
+    #   run: |
+    #     docker ps
+    #     docker logs postgres 
+    #     make restore-db
+
+    - uses: actions/checkout@v2
+    - name: Postgres Backup Restore
+      uses: tj-actions/pg-restore@v4.5
+      with:
+        database_url: "postgres://myusername:mypassword@localhost:5432/postgres"
+        backup_file: "db/flight_log.sql"
 
     - name: Setup Go env
       uses: actions/setup-go@v3
