@@ -123,6 +123,20 @@ func TestGetFlights(t *testing.T) {
 			expectedCode:    422,
 			expectedMessage: "`generation` is not a valid numeric value [1 to 26]",
 		},
+		{
+			description:     "GET Flights with valid `from` date",
+			route:           "/api/v1/flights?from=2018-01-01T00:00:00Z",
+			expectedError:   false,
+			expectedCode:    200,
+			expectedMessage: "Flights Found",
+		},
+		{
+			description:     "GET Flights with invalid `from` date",
+			route:           "/api/v1/flights?from=Apr 1 2022",
+			expectedError:   false,
+			expectedCode:    422,
+			expectedMessage: "Invalid date `from` provided. See RFC3339 for valid format",
+		},
 	}
 
 	// Connect to the Database

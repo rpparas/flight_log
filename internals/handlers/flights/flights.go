@@ -2,6 +2,7 @@ package flightsHandler
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -21,11 +22,20 @@ func GetFlights(c *fiber.Ctx) error {
 	var flights []model.Flight
 
 	generation := parseQueryGeneration(c)
+	dateFrom, err := parseQueryDateTime(c, "from")
+	if err != nil {
+		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Invalid date `from` provided. See RFC3339 for valid format", "data": nil})
+	}
+
 	if generation == -1 {
 		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`generation` is not a valid numeric value [1 to 26]", "data": nil})
-	} else if generation > 0 {
-		db.Model(&model.Flight{}).Joins("left join robots on flights.robot_id = robots.id").Where("generation = ?", generation).Scan(&flights)
+	}
 
+	// TODO: figure out how to chain these queries
+	if generation > 0 {
+		db.Model(&model.Flight{}).Joins("left join robots on flights.robot_id = robots.id").Where("generation = ?", generation).Scan(&flights)
+	} else if !dateFrom.IsZero() {
+		db.Model(&model.Flight{}).Where("start_time >= ?", dateFrom).Scan(&flights)
 	} else {
 		// if no query string is declared, then search everything
 		db.Find(&flights)
@@ -61,6 +71,24 @@ func parseQueryGeneration(c *fiber.Ctx) int {
 		return -1
 	}
 	return intVal
+}
+
+func parseQueryDateTime(c *fiber.Ctx, queryName string) (_ time.Time, err error) {
+	// Parses datetime string from `queryName` URL param based off RFC3339 format
+	// returns "time-zero" equivalent if invalid
+	// returns valid Time if successfully parsed
+
+	dateTimeStr := c.Query(queryName)
+
+	if len(dateTimeStr) == 0 {
+		return
+	}
+
+	dateObj, err := time.Parse(time.RFC3339, dateTimeStr)
+	if err != nil {
+		return
+	}
+	return dateObj, nil
 }
 
 // CreateFlight func create a flight
