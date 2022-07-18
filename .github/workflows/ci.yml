@@ -16,9 +16,9 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB_NAME }}
+          POSTGRES_USER: myusername
+          POSTGRES_PASSWORD: mypassword
+          POSTGRES_DB: postgres
         ports:
           - 5432:5432
         options: >-
@@ -30,19 +30,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # - name: Start Postgres DB
-    #   working-directory: ./dockerfiles/postgres
-    #   run: |
-    #     make build && make run-ci
-    #     sleep 10
-
-    # - name: Fill DB with some data
-    #   run: |
-    #     docker ps
-    #     docker logs postgres 
-    #     make restore-db
-
-    - uses: actions/checkout@v2
     - name: Postgres Backup Restore
       uses: tj-actions/pg-restore@v4.5
       with:
