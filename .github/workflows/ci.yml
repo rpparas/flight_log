@@ -27,6 +27,11 @@ jobs:
         docker logs postgres 
         make restore-db
 
+    - name: Setup Go env
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18.0
+
     - name: Run unit tests baremetal
       run: |
         make test
