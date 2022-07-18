@@ -19,10 +19,12 @@ jobs:
       working-directory: ./dockerfiles/postgres
       run: |
         make build && make run
+        sleep 10
 
     - name: Fill DB with some data
       run: |
-        docker ps 
+        docker ps
+        docker logs postgres 
         make restore-db
 
     - name: Run unit tests via Docker container
