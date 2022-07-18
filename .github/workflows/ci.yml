@@ -12,8 +12,28 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: {{ secrets.POSTGRES_DB_USER }}
+          POSTGRES_PASSWORD: {{ secrets.POSTGRES_DB_PASSWORD }}
+          POSTGRES_DB: {{ secrets.POSTGRES_DB_NAME }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v2
+
+    - name: Fill DB with some data
+      run: |
+        docker ps 
+        make restore-db
 
     - name: Run unit tests via Docker container
       run: |
