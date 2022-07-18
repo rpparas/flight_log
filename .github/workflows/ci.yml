@@ -18,7 +18,7 @@ jobs:
     - name: Start Postgres DB
       working-directory: ./dockerfiles/postgres
       run: |
-        make build && make run
+        make build && make run-ci
         sleep 10
 
     - name: Fill DB with some data
