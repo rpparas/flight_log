@@ -18,6 +18,11 @@ import (
 // @Success 200 {array} model.Flight
 // @router /api/v1/flights [get]
 func GetFlights(c *fiber.Ctx) error {
+	// TODOs:
+	// 1. limit number of results
+	// 2. do pagination (token for next set of results)
+	// 3. handle having more query strings
+
 	db := database.DB
 	var flights []model.Flight
 
