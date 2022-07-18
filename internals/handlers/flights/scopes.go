@@ -23,3 +23,9 @@ func EndingIn(dateTo time.Time) func(db *gorm.DB) *gorm.DB {
 		return db.Where("end_time <= ?", dateTo)
 	}
 }
+
+func ShorterThan(maxDurationMins int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("EXTRACT(EPOCH FROM (end_time - start_time)) <= ?", maxDurationMins*60)
+	}
+}

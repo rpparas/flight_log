@@ -36,6 +36,15 @@ func GetFlights(c *fiber.Ctx) error {
 		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Invalid date `to` provided. See RFC3339 for valid format", "data": nil})
 	}
 
+	if !isCompatibleDateRange(dateFrom, dateTo) {
+		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`from` date doesn't come after `to` date", "data": nil})
+	}
+
+	maxDurationMins := parseQuerymaxDurationMins(c)
+	if maxDurationMins == -1 {
+		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`maxDurationMins` should be an integer value [1 to 30]", "data": nil})
+	}
+
 	// use scopes to chain conditions based on query strings in URL
 	if generation > 0 {
 		db = db.Scopes(GenerationEquals(generation))
@@ -49,8 +58,9 @@ func GetFlights(c *fiber.Ctx) error {
 		db = db.Scopes(EndingIn(dateTo))
 	}
 
-	if !isCompatibleDateRange(dateFrom, dateTo) {
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`from` date doesn't come after `to` date", "data": nil})
+	if maxDurationMins > 0 {
+		// we need to convert these to epocs
+		db = db.Scopes(ShorterThan(maxDurationMins))
 	}
 
 	// even if no query string is declared, then search everything
@@ -114,6 +124,29 @@ func isCompatibleDateRange(dateFrom time.Time, dateTo time.Time) bool {
 		return true
 	}
 	return dateFrom.Before(dateTo)
+}
+
+func parseQuerymaxDurationMins(c *fiber.Ctx) int {
+	// Parses generation number if supplied in the URL as a query parameter
+	// returns -1 if invalid
+	// returns -2 if ignore
+	// returns valid generation [1 to 26] if valid
+
+	maxDurationMins := c.Query("maxDurationMins")
+	if len(maxDurationMins) == 0 {
+		return -2
+	}
+
+	intVal, err := strconv.Atoi(maxDurationMins)
+	if err != nil {
+		return -1
+	}
+
+	// TODO: figure out how to implement this via router as regex rule
+	if intVal < 1 || intVal > 30 {
+		return -1
+	}
+	return intVal
 }
 
 // CreateFlight func create a flight

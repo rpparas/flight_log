@@ -151,6 +151,13 @@ func TestGetFlights(t *testing.T) {
 			expectedCode:    422,
 			expectedMessage: "`from` date doesn't come after `to` date",
 		},
+		{
+			description:     "GET Flights with maxDurationMins",
+			route:           "/api/v1/flights?maxDurationMins=16",
+			expectedError:   false,
+			expectedCode:    200,
+			expectedMessage: "Flights Found",
+		},
 	}
 
 	// Connect to the Database
