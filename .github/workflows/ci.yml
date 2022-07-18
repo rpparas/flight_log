@@ -27,6 +27,6 @@ jobs:
         docker logs postgres 
         make restore-db
 
-    - name: Run unit tests via Docker container
+    - name: Run unit tests baremetal
       run: |
-        make test-docker-image
+        make test
