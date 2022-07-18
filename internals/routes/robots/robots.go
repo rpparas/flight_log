@@ -12,4 +12,5 @@ func SetupApiRoutes(router fiber.Router) {
 	robots.Get("/", robotsHandler.GetRobots)
 	robots.Get("/:robotId", robotsHandler.GetRobots)
 
+	// TODO: provide option to edit (patch) and delete existing robots
 }

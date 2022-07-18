@@ -17,6 +17,14 @@ docs:
 	go mod vendor -v
 	swag init -g main.go --output docs --parseDependency --parseInternal
 
+dump-db:
+	pg_dump --file db/flight_log.sql --host localhost \
+		--port 5432 --username myusername --password \
+		--no-blobs postgres
+
+restore-db:
+	cat db/flight_log.sql | docker exec -i postgres psql -U myusername
+
 #################################################################
 ####################### When using Docker #######################
 #################################################################

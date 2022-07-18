@@ -12,9 +12,35 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: myusername
+          POSTGRES_PASSWORD: mypassword
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v2
 
-    - name: Run unit tests via Docker container
+    - name: Postgres Backup Restore
+      uses: tj-actions/pg-restore@v4.5
+      with:
+        database_url: "postgres://myusername:mypassword@localhost:5432/postgres"
+        backup_file: "db/flight_log.sql"
+
+    - name: Setup Go env
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18.0
+
+    - name: Run unit tests baremetal
       run: |
-        make test-docker-image
+        make test

@@ -12,4 +12,6 @@ func SetupApiRoutes(router fiber.Router) {
 	flights.Get("/", flightsHandler.GetFlights)
 	flights.Get("/:flightId", flightsHandler.GetFlight)
 
+	// TODO: provide option to edit (patch) and delete existing flights
+
 }

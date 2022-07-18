@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/rpparas/flight_log/config"
 	"github.com/rpparas/flight_log/internals/model"
@@ -16,10 +17,10 @@ var DB *gorm.DB
 func ConnectDB() {
 	var err error
 	p := config.Config("DB_PORT")
-	port, err := strconv.ParseUint(p, 10, 32)
+	port, err := strconv.ParseUint(strings.TrimSpace(p), 10, 32)
 
 	if err != nil {
-		log.Println("Idiot")
+		log.Println("Invalid port")
 	}
 
 	// Connection URL to connect to Postgres Database
@@ -31,7 +32,7 @@ func ConnectDB() {
 		panic("Failed to connect to database")
 	}
 
-	fmt.Println("Connection opened to Database")
+	fmt.Println("Connection opened to database")
 
 	// Migrate the database to the latest schema
 	DB.AutoMigrate(&model.Flight{})

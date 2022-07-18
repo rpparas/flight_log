@@ -1,10 +1,11 @@
+#!make
+SHELL := /bin/bash
+
 build:
 	docker build -t postgres .
 
-run:
-	docker run \
-		-e POSTGRES_USER=myusername \
-		-e POSTGRES_PASSWORD=mypassword \
-		-p 5432:5432 \
-		-v /data:/var/lib/postgresql/data \
-		postgres
+run-local:
+	docker run -d -e POSTGRES_USER=myusername -e POSTGRES_PASSWORD=mypassword -p 5432:5432 -v /data:/var/lib/postgresql/data --name postgres postgres
+
+run-ci:
+	docker run -d -e POSTGRES_USER=myusername -e POSTGRES_PASSWORD=mypassword -p 5432:5432 --name postgres postgres
