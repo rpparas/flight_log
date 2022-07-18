@@ -144,6 +144,13 @@ func TestGetFlights(t *testing.T) {
 			expectedCode:    200,
 			expectedMessage: "Flights Found",
 		},
+		{
+			description:     "GET Flights with incompatible `from` & `to` dates",
+			route:           "/api/v1/flights?to=2022-07-01T00:00:00Z&from=2023-07-03T00:00:00Z",
+			expectedError:   false,
+			expectedCode:    422,
+			expectedMessage: "`from` date doesn't come after `to` date",
+		},
 	}
 
 	// Connect to the Database

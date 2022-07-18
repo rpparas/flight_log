@@ -49,6 +49,10 @@ func GetFlights(c *fiber.Ctx) error {
 		db = db.Scopes(EndingIn(dateTo))
 	}
 
+	if !isCompatibleDateRange(dateFrom, dateTo) {
+		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`from` date doesn't come after `to` date", "data": nil})
+	}
+
 	// even if no query string is declared, then search everything
 	db.Debug().Find(&flights)
 
@@ -100,6 +104,16 @@ func parseQueryDateTime(c *fiber.Ctx, queryName string) (_ time.Time, err error)
 		return
 	}
 	return dateObj, nil
+}
+
+func isCompatibleDateRange(dateFrom time.Time, dateTo time.Time) bool {
+	if dateFrom.IsZero() {
+		return true
+	}
+	if dateTo.IsZero() {
+		return true
+	}
+	return dateFrom.Before(dateTo)
 }
 
 // CreateFlight func create a flight
