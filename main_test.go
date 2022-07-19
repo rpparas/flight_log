@@ -76,18 +76,20 @@ type Result struct {
 	Message string
 }
 
+type TestCase struct {
+	description string
+
+	// Test input
+	route string
+
+	// Expected output
+	expectedError   bool
+	expectedCode    int
+	expectedMessage string
+}
+
 func TestGetFlights(t *testing.T) {
-	tests := []struct {
-		description string
-
-		// Test input
-		route string
-
-		// Expected output
-		expectedError   bool
-		expectedCode    int
-		expectedMessage string
-	}{
+	tests := []TestCase{
 		{
 			description:     "GET Flights with at least 1 result",
 			route:           "/api/v1/flights",
@@ -160,13 +162,16 @@ func TestGetFlights(t *testing.T) {
 		},
 	}
 
+	executeTests(t, tests)
+}
+
+func executeTests(t *testing.T, tests []TestCase) {
 	// Connect to the Database
 	database.ConnectDB()
 
 	// Setup the app as it is done in the main function
 	app := Setup()
 
-	// Iterate through test single test cases
 	for _, test := range tests {
 		req, _ := http.NewRequest(
 			"GET",
@@ -205,4 +210,5 @@ func TestGetFlights(t *testing.T) {
 
 		assert.Equalf(t, test.expectedMessage, apiResult.Message, test.description)
 	}
+
 }
