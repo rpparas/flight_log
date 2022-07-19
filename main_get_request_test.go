@@ -72,22 +72,6 @@ func TestIndexRoute(t *testing.T) {
 	}
 }
 
-type Result struct {
-	Message string
-}
-
-type TestCase struct {
-	description string
-
-	// Test input
-	route string
-
-	// Expected output
-	expectedError   bool
-	expectedCode    int
-	expectedMessage string
-}
-
 func TestGetFlights(t *testing.T) {
 	tests := []TestCase{
 		{
@@ -162,10 +146,10 @@ func TestGetFlights(t *testing.T) {
 		},
 	}
 
-	executeTests(t, tests)
+	executeGetTests(t, tests)
 }
 
-func executeTests(t *testing.T, tests []TestCase) {
+func executeGetTests(t *testing.T, tests []TestCase) {
 	// Connect to the Database
 	database.ConnectDB()
 
