@@ -1,7 +1,13 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -50,6 +56,58 @@ func executePostTestsJson(t *testing.T, tests []TestCase) {
 		)
 
 		req.Header.Add("Content-Type", "application/json")
+		compareTestResults(t, test, app, req)
+	}
+
+}
+
+func TestPostFlightsCsv(t *testing.T) {
+	tests := []TestCase{
+		{
+			description:     "POST bulk Flights via CSV",
+			route:           "/api/v1/flights/csv",
+			filepath:        "./tmp/flights.csv",
+			expectedError:   false,
+			expectedCode:    201,
+			expectedMessage: "Created Flights",
+		},
+	}
+	executePostTestsCsv(t, tests)
+}
+
+func executePostTestsCsv(t *testing.T, tests []TestCase) {
+	database.ConnectDB()
+
+	// Setup the app as it is done in the main function
+	app := Setup()
+
+	// TODO: figure out how to send file as payload
+
+	for _, test := range tests {
+		payload := &bytes.Buffer{}
+		writer := multipart.NewWriter(payload)
+		file, errFile := os.Open(test.filepath)
+		defer file.Close()
+
+		part1, _ := writer.CreateFormFile("document", filepath.Base(test.filepath))
+		_, errFile = io.Copy(part1, file)
+		if errFile != nil {
+			fmt.Println(errFile)
+			return
+		}
+		err := writer.Close()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		req, _ := http.NewRequest(
+			"POST",
+			test.route,
+			payload,
+		)
+
+		req.Header.Add("Content-Type", writer.FormDataContentType())
 		compareTestResults(t, test, app, req)
 	}
 

@@ -19,6 +19,7 @@ type TestCase struct {
 	description string
 	route       string
 	payload     string
+	filepath    string
 
 	// Expected output
 	expectedError   bool
