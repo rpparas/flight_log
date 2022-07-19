@@ -8,7 +8,7 @@ import (
 	"github.com/rpparas/flight_log/database"
 )
 
-func TestPostFlights(t *testing.T) {
+func TestPostFlightsJson(t *testing.T) {
 	tests := []TestCase{
 		{
 			description: "POST single Flight",
@@ -33,10 +33,10 @@ func TestPostFlights(t *testing.T) {
 			expectedMessage: "Could not create flight",
 		},
 	}
-	executePostTests(t, tests)
+	executePostTestsJson(t, tests)
 }
 
-func executePostTests(t *testing.T, tests []TestCase) {
+func executePostTestsJson(t *testing.T, tests []TestCase) {
 	database.ConnectDB()
 
 	// Setup the app as it is done in the main function
