@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -150,7 +148,6 @@ func TestGetFlights(t *testing.T) {
 }
 
 func executeGetTests(t *testing.T, tests []TestCase) {
-	// Connect to the Database
 	database.ConnectDB()
 
 	// Setup the app as it is done in the main function
@@ -163,36 +160,6 @@ func executeGetTests(t *testing.T, tests []TestCase) {
 			nil,
 		)
 
-		res, err := app.Test(req, -1)
-
-		// verify that no error occured, that is not expected
-		assert.Equalf(t, test.expectedError, err != nil, test.description)
-
-		// As expected errors lead to broken responses, the next
-		// test case needs to be processed
-		if test.expectedError {
-			continue
-		}
-
-		// Verify if the status code is as expected
-		assert.Equalf(t, test.expectedCode, res.StatusCode, test.description)
-
-		// Read the response body
-		body, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		// parse api result as JSON
-		var apiResult Result
-		err = json.Unmarshal(body, &apiResult)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		assert.Nilf(t, err, test.description)
-
-		assert.Equalf(t, test.expectedMessage, apiResult.Message, test.description)
+		compareTestResults(t, test, app, req)
 	}
-
 }
