@@ -66,7 +66,7 @@ func TestPostFlightsCsv(t *testing.T) {
 		{
 			description:     "POST bulk Flights via CSV",
 			route:           "/api/v1/flights/csv",
-			filepath:        "./tmp/flights.csv",
+			filepath:        "./examples/flights.csv",
 			expectedError:   false,
 			expectedCode:    201,
 			expectedMessage: "Created Flights",

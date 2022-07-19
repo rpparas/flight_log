@@ -18,7 +18,6 @@ func main() {
 	// Start a new REST API app using fiber as framework
 	app := Setup()
 
-	// Connect to the Database
 	database.ConnectDB()
 
 	app.Listen(":8000")
