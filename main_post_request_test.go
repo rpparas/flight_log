@@ -10,18 +10,20 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/rpparas/flight_log/database"
 )
 
 func TestPostFlightsJson(t *testing.T) {
+	fakeTime := time.Now().Format(time.RFC3339)
 	tests := []TestCase{
 		{
 			description: "POST single Flight",
 			route:       "/api/v1/flights",
 			payload: `{
 				"robotId": "e570b6c0-9bb0-47c9-a358-b984ed402406",
-				"startTime": "2022-07-18T01:00:01+00:00"
+				"startTime": "` + fakeTime + `"
 			}`,
 			expectedError:   false,
 			expectedCode:    201,
@@ -32,7 +34,7 @@ func TestPostFlightsJson(t *testing.T) {
 			route:       "/api/v1/flights",
 			payload: `{
 				"robotId": "e570b6c0-9bb0-47c9-a358-b984ed402406",
-				"startTime": "2022-07-18T01:00:01+00:00"
+				"startTime": "` + fakeTime + `"
 			}`,
 			expectedError:   false,
 			expectedCode:    500,
