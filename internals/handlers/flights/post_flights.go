@@ -63,7 +63,12 @@ func CreateFlights(c *fiber.Ctx) error {
 	}
 
 	path := "./tmp/" + file.Filename
-	c.SaveFile(file, path)
+	err = c.SaveFile(file, path)
+	if err != nil {
+		log.Println(err)
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Unable to save received CSV", "data": nil})
+	}
+
 	records, err := readRowsFromCsv(path)
 	if err != nil {
 		log.Fatal(err)
