@@ -2,8 +2,10 @@ package flightsHandler
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -65,7 +67,23 @@ func CreateFlights(c *fiber.Ctx) error {
 	path := "./tmp/" + file.Filename
 	err = c.SaveFile(file, path)
 	if err != nil {
-		log.Println(err)
+		mydir, err := os.Getwd()
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(mydir)
+
+		err = filepath.Walk("./", func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
+			fmt.Printf("dir: %v: name: %s\n", info.IsDir(), path)
+			return nil
+		})
+		if err != nil {
+			fmt.Println(err)
+		}
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Unable to save received CSV: " + err.Error(), "data": nil})
 	}
 
