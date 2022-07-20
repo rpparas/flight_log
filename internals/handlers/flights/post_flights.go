@@ -2,10 +2,9 @@ package flightsHandler
 
 import (
 	"encoding/csv"
-	"fmt"
 	"log"
+	"mime/multipart"
 	"os"
-	"path/filepath"
 	"strconv"
 	"time"
 
@@ -63,27 +62,8 @@ func CreateFlights(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Missing CSV attachment", "data": nil})
 	}
-
-	path := "./tmp/" + file.Filename
-	err = c.SaveFile(file, path)
+	path, err := saveTempFile(c, file)
 	if err != nil {
-		mydir, err := os.Getwd()
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(mydir)
-
-		err = filepath.Walk("./", func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				fmt.Println(err)
-				return err
-			}
-			fmt.Printf("dir: %v: name: %s\n", info.IsDir(), path)
-			return nil
-		})
-		if err != nil {
-			fmt.Println(err)
-		}
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Unable to save received CSV: " + err.Error(), "data": nil})
 	}
 
@@ -119,6 +99,19 @@ func CreateFlights(c *fiber.Ctx) error {
 	// TODO: Return the created flights
 	// TODO: show errors
 	return c.Status(201).JSON(fiber.Map{"status": "success", "message": "Created Flights", "data": nil, "errors": nil})
+}
+
+func saveTempFile(c *fiber.Ctx, file *multipart.FileHeader) (string, error) {
+	path := "./tmp"
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		os.Mkdir(path, 0755)
+	}
+	path += "/" + file.Filename
+	err := c.SaveFile(file, path)
+	if err != nil {
+		return "", nil
+	}
+	return path, nil
 }
 
 func readRowsFromCsv(fileName string) ([][]string, error) {
