@@ -71,7 +71,14 @@ func TestPostFlightsCsv(t *testing.T) {
 			filepath:        "./examples/flights.csv",
 			expectedError:   false,
 			expectedCode:    201,
-			expectedMessage: "Created Flights",
+			expectedMessage: "Created 2 Flights",
+		},
+		{
+			description:     "POST bulk duplicate Flights via CSV",
+			route:           "/api/v1/flights/csv",
+			expectedError:   false,
+			expectedCode:    422,
+			expectedMessage: "No flights were saved to the database.",
 		},
 	}
 	executePostTestsCsv(t, tests)

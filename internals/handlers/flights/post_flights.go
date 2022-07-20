@@ -2,6 +2,7 @@ package flightsHandler
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"mime/multipart"
 	"os"
@@ -76,29 +77,37 @@ func CreateFlights(c *fiber.Ctx) error {
 	// TODO: add validation for records parsed from CSV
 	db := database.DB
 	numFlightsSaved := 0
+	allErrors := []string{}
 
 	for i, record := range records {
-		flight, errors := constructFlightRecord(record, i)
-		if len(errors) > 0 {
-			log.Println(errors)
+		flight, rowErrors := constructFlightRecord(record, i)
+		if len(rowErrors) > 0 {
 			continue
 		}
 
+		// TODO: optimize this INSERT query by inserting in batches
 		err = db.Create(&flight).Error
 		if err != nil {
-			log.Println(err)
-			// TODO: skip ?
+			errorMsg := "Row " + strconv.Itoa(i+2) + " was not imported to DB. Error: " + err.Error()
+			rowErrors = append(rowErrors, errorMsg)
+		}
+
+		allErrors = append(allErrors, rowErrors...)
+		if err != nil {
 			continue
-			// return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create flight", "data": err})
 		}
 
 		numFlightsSaved += 1
 	}
 
-	// TODO: save to db
-	// TODO: Return the created flights
-	// TODO: show errors
-	return c.Status(201).JSON(fiber.Map{"status": "success", "message": "Created Flights", "data": nil, "errors": nil})
+	if numFlightsSaved > 0 {
+		// TODO: show the UUIDs of the flights created & the corresponding row?
+		return c.Status(201).JSON(fiber.Map{"status": "success", "message": fmt.Sprint("Created ", numFlightsSaved, " Flights"), "data": nil, "errors": allErrors})
+	} else {
+		// TODO: determine if we should really use error 422 or something else
+		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "No flights were saved to the database.", "data": nil, "errors": allErrors})
+	}
+
 }
 
 func saveTempFile(c *fiber.Ctx, file *multipart.FileHeader) (string, error) {
@@ -145,42 +154,42 @@ func constructFlightRecord(record []string, i int) (model.Flight, []string) {
 
 	if err != nil {
 		// TODO: create structure of what error message would be
-		errorMsg := "Row " + strconv.Itoa(i+2) + " invalid robot ID " + record[0]
+		errorMsg := "Row " + strconv.Itoa(i+2) + " has invalid robot ID " + record[0]
 		errors = append(errors, errorMsg)
 	}
 
 	startTime, err := time.Parse(time.RFC3339, record[1])
 	if err != nil {
 		// TODO: create structure of what error message would be
-		errorMsg := "Row " + strconv.Itoa(i+2) + " invalid start_time " + record[1]
+		errorMsg := "Row " + strconv.Itoa(i+2) + " has invalid start_time " + record[1]
 		errors = append(errors, errorMsg)
 	}
 
 	endTime, err := time.Parse(time.RFC3339, record[2])
 	if err != nil {
 		// TODO: create structure of what error message would be
-		errorMsg := "Row " + strconv.Itoa(i+2) + " invalid end_time " + record[2]
+		errorMsg := "Row " + strconv.Itoa(i+2) + " has invalid end_time " + record[2]
 		errors = append(errors, errorMsg)
 	}
 
 	lat, err := strconv.ParseFloat(record[3], 64)
 	if err != nil {
 		// TODO: create structure of what error message would be
-		errorMsg := "Row " + strconv.Itoa(i+2) + " invalid latitude " + record[3]
+		errorMsg := "Row " + strconv.Itoa(i+2) + " has invalid latitude " + record[3]
 		errors = append(errors, errorMsg)
 	}
 
 	lng, err := strconv.ParseFloat(record[4], 64)
 	if err != nil {
 		// TODO: create structure of what error message would be
-		errorMsg := "Row " + strconv.Itoa(i+2) + " invalid longitude " + record[4]
+		errorMsg := "Row " + strconv.Itoa(i+2) + " has invalid longitude " + record[4]
 		errors = append(errors, errorMsg)
 	}
 
 	if len(errors) > 0 {
 		return model.Flight{}, errors
 	}
-	// TODO: construct record to save to DB
+
 	flight := model.Flight{
 		RobotID:   robotId,
 		StartTime: startTime,
