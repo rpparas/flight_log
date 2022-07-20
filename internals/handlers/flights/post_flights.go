@@ -3,7 +3,6 @@ package flightsHandler
 import (
 	"encoding/csv"
 	"fmt"
-	"log"
 	"mime/multipart"
 	"os"
 	"strconv"
@@ -70,8 +69,7 @@ func CreateFlights(c *fiber.Ctx) error {
 
 	records, err := readRowsFromCsv(path)
 	if err != nil {
-		log.Println(err)
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Unable to read CSV attachment", "data": nil})
+		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Unable to read CSV attachment: " + err.Error(), "data": nil})
 	}
 
 	// TODO: add validation for records parsed from CSV
@@ -86,9 +84,9 @@ func CreateFlights(c *fiber.Ctx) error {
 		}
 
 		// TODO: optimize this INSERT query by inserting in batches
-		err = db.Create(&flight).Error
+		err = db.Debug().Create(&flight).Error
 		if err != nil {
-			errorMsg := "Row " + strconv.Itoa(i+2) + " was not imported to DB. Error: " + err.Error()
+			errorMsg := "Row " + strconv.Itoa(i+2) + " was not imported to DB " + err.Error()
 			rowErrors = append(rowErrors, errorMsg)
 		}
 

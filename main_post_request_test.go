@@ -2,8 +2,8 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -67,6 +67,7 @@ func executePostTestsJson(t *testing.T, tests []TestCase) {
 }
 
 func TestPostFlightsCsv(t *testing.T) {
+	twoErrors := []string{"Japan", "Australia"}
 	tests := []TestCase{
 		{
 			description:     "POST bulk Flights via CSV",
@@ -75,13 +76,25 @@ func TestPostFlightsCsv(t *testing.T) {
 			expectedError:   false,
 			expectedCode:    201,
 			expectedMessage: "Created 2 Flights",
+			expectedErrors:  []string{},
 		},
 		{
 			description:     "POST bulk duplicate Flights via CSV",
 			route:           "/api/v1/flights/csv",
+			filepath:        "./examples/flights.csv",
 			expectedError:   false,
 			expectedCode:    422,
 			expectedMessage: "No flights were saved to the database.",
+			expectedErrors:  twoErrors,
+		},
+		{
+			description:     "POST empty file (no contents)",
+			route:           "/api/v1/flights/csv",
+			filepath:        "./examples/invalid.csv",
+			expectedError:   false,
+			expectedCode:    422,
+			expectedMessage: "Unable to read CSV attachment: EOF",
+			expectedErrors:  []string{},
 		},
 	}
 	executePostTestsCsv(t, tests)
@@ -93,23 +106,24 @@ func executePostTestsCsv(t *testing.T, tests []TestCase) {
 	// Setup the app as it is done in the main function
 	app := Setup()
 
-	// TODO: figure out how to send file as payload
-
 	for _, test := range tests {
 		payload := &bytes.Buffer{}
 		writer := multipart.NewWriter(payload)
 		file, errFile := os.Open(test.filepath)
+		if errFile != nil {
+			return
+		}
 		defer file.Close()
 
 		part1, _ := writer.CreateFormFile("document", filepath.Base(test.filepath))
 		_, errFile = io.Copy(part1, file)
 		if errFile != nil {
-			fmt.Println(errFile)
+			log.Println(errFile)
 			return
 		}
 		err := writer.Close()
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
