@@ -58,7 +58,10 @@ func executePostTestsJson(t *testing.T, tests []TestCase) {
 		)
 
 		req.Header.Add("Content-Type", "application/json")
-		compareTestResults(t, test, app, req)
+		res := expectedMatchesActual(t, test, app, req)
+		if !res {
+			continue
+		}
 	}
 
 }
@@ -117,7 +120,10 @@ func executePostTestsCsv(t *testing.T, tests []TestCase) {
 		)
 
 		req.Header.Add("Content-Type", writer.FormDataContentType())
-		compareTestResults(t, test, app, req)
+		res := expectedMatchesActual(t, test, app, req)
+		if !res {
+			continue
+		}
 	}
 
 }

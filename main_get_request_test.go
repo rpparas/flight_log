@@ -160,6 +160,9 @@ func executeGetTests(t *testing.T, tests []TestCase) {
 			nil,
 		)
 
-		compareTestResults(t, test, app, req)
+		res := expectedMatchesActual(t, test, app, req)
+		if !res {
+			continue
+		}
 	}
 }

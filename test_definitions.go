@@ -27,15 +27,13 @@ type TestCase struct {
 	expectedMessage string
 }
 
-func compareTestResults(t *testing.T, test TestCase, app *fiber.App, req *http.Request) {
+func expectedMatchesActual(t *testing.T, test TestCase, app *fiber.App, req *http.Request) bool {
 	// verify that no error occured, that is not expected
 	res, err := app.Test(req, -1)
 	assert.Equalf(t, test.expectedError, err != nil, test.description)
 
-	// As expected errors lead to broken responses, the next
-	// test case needs to be processed
 	if test.expectedError {
-		return
+		return false
 	}
 
 	// Verify if the status code is as expected
@@ -58,4 +56,5 @@ func compareTestResults(t *testing.T, test TestCase, app *fiber.App, req *http.R
 
 	assert.Equalf(t, test.expectedMessage, apiResult.Message, test.description)
 
+	return true
 }
