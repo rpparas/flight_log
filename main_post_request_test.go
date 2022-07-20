@@ -20,7 +20,7 @@ func TestPostFlightsJson(t *testing.T) {
 	tests := []TestCase{
 		{
 			description: "POST single Flight",
-			route:       "/api/v1/flights",
+			route:       "/api/v1/flight",
 			payload: `{
 				"robotId": "e570b6c0-9bb0-47c9-a358-b984ed402406",
 				"startTime": "` + fakeTime + `"
@@ -31,7 +31,7 @@ func TestPostFlightsJson(t *testing.T) {
 		},
 		{
 			description: "POST duplicate Flight",
-			route:       "/api/v1/flights",
+			route:       "/api/v1/flight",
 			payload: `{
 				"robotId": "e570b6c0-9bb0-47c9-a358-b984ed402406",
 				"startTime": "` + fakeTime + `"
