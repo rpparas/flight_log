@@ -9,7 +9,10 @@ watch:
 
 test:
 	go mod tidy
-	go test -v .
+	go test -timeout 30s -v .
+
+test-csv:
+	go test -timeout 30s -run ^TestPostFlightsCsv
 
 docs:
 	go get -v github.com/swaggo/swag/cmd/swag
