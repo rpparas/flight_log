@@ -17,7 +17,7 @@ func Setup() *fiber.App {
 }
 
 func main() {
-	log.SetFlags(log.Lshortfile)
+	log.SetFlags(log.LstdFlags | log.Llongfile)
 
 	// Start a new REST API app using fiber as framework
 	app := Setup()
