@@ -6,11 +6,12 @@ import (
 )
 
 func SetupApiRoutes(router fiber.Router) {
-	// Endpoints for robots
-	robots := router.Group("/robots")
-	robots.Post("/", robotsHandler.CreateRobot)
-	robots.Get("/", robotsHandler.GetRobots)
-	robots.Get("/:robotId", robotsHandler.GetRobots)
+	// TODO: use singular vs plural
+	robot := router.Group("/robots")
+	robot.Get("/", robotsHandler.GetRobots)
+	// TODO: need post request for multiple robots
 
-	// TODO: provide option to edit (patch) and delete existing robots
+	robots := router.Group("/robot")
+	robots.Get("/:robotId", robotsHandler.GetRobots)
+	robot.Post("/", robotsHandler.CreateRobot)
 }
