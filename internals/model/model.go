@@ -20,6 +20,6 @@ type Flight struct {
 	RobotID   uuid.UUID `json:"robotId" gorm:"type:uuid REFERENCES robots(ID);uniqueIndex:idx_flight"`
 	StartTime time.Time `json:"startTime" gorm:"uniqueIndex:idx_flight"`
 	EndTime   time.Time `json:"endTime" gorm:"uniqueIndex:idx_flight"`
-	Lat       float64   `json:"lat" gorm:"type:decimal(10,8);uniqueIndex:idx_flight"`
-	Lng       float64   `json:"lng" gorm:"type:decimal(11,8);uniqueIndex:idx_flight"`
+	Lat       float64   `json:"lat" gorm:"type:decimal;uniqueIndex:idx_flight"`
+	Lng       float64   `json:"lng" gorm:"type:decimal;uniqueIndex:idx_flight"`
 }
