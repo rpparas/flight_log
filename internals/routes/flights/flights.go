@@ -6,18 +6,14 @@ import (
 )
 
 func SetupApiRoutes(router fiber.Router) {
-	flights := router.Group("/flights")
+	// TODO: use singular vs plural
 	// for uploading flights in bulk using CSV
+	flights := router.Group("/flights")
 	flights.Post("/csv", flightsHandler.CreateFlights)
-
-	flights.Post("/", flightsHandler.CreateFlight)
-
-	// for retrieving flights
 	flights.Get("/", flightsHandler.GetFlights)
-	flights.Get("/:flightId", flightsHandler.GetFlight)
 
-	// TODO: provide endpoint to edit (patch) and delete existing flights
-
-	// TODO: provide endpoint to create, read robots
-
+	// for single flight
+	flight := router.Group("/flight")
+	flight.Post("/", flightsHandler.CreateFlight)
+	flight.Get("/:flightId", flightsHandler.GetFlight)
 }
