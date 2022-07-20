@@ -12,11 +12,15 @@ flight = ...
 TODO
 
 ## System Requirements
+### Basics
+- git    for downloading this repo
+- curl   for fetching resources
+- jq     for parsing results
+
 ### If running baremetal:
-- git
-- curl
 - Go v1.18 (recommended), v1.13 (supported best-effort)
 - Postgres loaded with data
+- pgadmin4
 
 ### If running Docker container:
 - Docker
@@ -30,7 +34,33 @@ TODO
 ### Via Docker
 TODO
 
-## How to Use REST API
+## How to use REST API
+Create a drone
+```bash
+curl --location --request POST 'http://localhost:8000/api/v1/robots' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+	"name": "Alpha3"
+}'
+```
+
+Record a flight using drone/robot id:
+```
+curl --location --request POST 'http://localhost:8000/api/v1/flights' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "robotId": "e570b6c0-9bb0-47c9-a358-b984ed402406",
+    "startTime": "2022-08-16T00:00:00+00:00"
+    
+}
+'
+```
+
+Retrieving flight logs
+```
+curl --location --request GET 'http://localhost:8000/api/v1/flights?generation=1&from=2022-07-01T00:00:00Z&to=2023-07-03T00:00:00Z&maxDurationMins=16'
+```
+<hr>
 
 ## Feature Status
 - Resource Creation
