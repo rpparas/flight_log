@@ -67,7 +67,7 @@ func executePostTestsJson(t *testing.T, tests []TestCase) {
 }
 
 func TestPostFlightsCsv(t *testing.T) {
-	twoErrors := []string{"Japan", "Australia"}
+	twoErrors := []string{"error placeholder1", "error placeholder2"}
 	tests := []TestCase{
 		{
 			description:     "POST bulk Flights via CSV",
