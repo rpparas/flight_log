@@ -46,7 +46,7 @@ func CreateFlight(c *fiber.Ctx) error {
 // CreateFlight func create a flight
 // @Description Create a flight
 // @Tags Flights
-// @Accept json
+// @Accept text/csv
 // @Produce json
 // @Success 201 {object} model.Flight
 // @router /api/v1/flights/csv [post]

@@ -34,13 +34,13 @@ func GetRobot(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "message": "Robot Found", "data": robot})
 }
 
-// GetRobot func one robot by ID
-// @Description Get one robot by ID
+// GetRobot func multiple robots
+// @Description Get multiple robots
 // @Tags Robot
 // @Accept json
 // @Produce json
-// @Success 200 {object} model.Robot
-// @router /api/robots/ [get]
+// @Success 200 {array} model.Robot
+// @router /api/robots [get]
 func GetRobots(c *fiber.Ctx) error {
 	db := database.DB
 	var robots []model.Robot
