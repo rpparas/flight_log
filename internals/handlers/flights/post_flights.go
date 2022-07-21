@@ -205,6 +205,5 @@ func constructFlightRecord(i int, record []string) (model.Flight, []string) {
 		Lng:       lng,
 	}
 
-	// return flight, errors
-
+	return flight, errors
 }
