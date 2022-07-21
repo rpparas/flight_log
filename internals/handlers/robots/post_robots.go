@@ -16,21 +16,20 @@ import (
 // @router /api/robot [post]
 func CreateRobot(c *fiber.Ctx) error {
 	db := database.DB
-	robots := new(model.Robot)
+	robot := new(model.Robot)
 
 	// Store the body in the robots and return error if encountered
-	err := c.BodyParser(robots)
+	err := c.BodyParser(robot)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
 	}
-	// Add a uuid to the robots
-	robots.ID = uuid.New()
+
+	robot.ID = uuid.New()
 	// Create the Robot and return error if encountered
-	err = db.Create(&robots).Error
+	err = db.Create(&robot).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create robots", "data": err})
 	}
 
-	// Return the created robots
-	return c.JSON(fiber.Map{"status": "success", "message": "Created Robot", "data": robots})
+	return c.JSON(fiber.Map{"status": "success", "message": "Created Robot", "data": robot})
 }
