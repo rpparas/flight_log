@@ -99,6 +99,13 @@ paths:
       description: Get one flight by ID
       produces:
       - application/json
+      parameters:
+        - name: id
+          in: path
+          description: UUID of flight to fetch
+          required: true
+          type: string
+          format: string      
       responses:
         "200":
           description: OK
@@ -143,6 +150,13 @@ paths:
       description: Get one robot by ID
       produces:
       - application/json
+      parameters:
+        - name: id
+          in: path
+          description: UUID of robot to fetch
+          required: true
+          type: string
+          format: string      
       responses:
         "200":
           description: OK
