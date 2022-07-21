@@ -28,16 +28,28 @@ TODO
 - curl
 
 ## How to Deploy
-### Via Baremetal
-TODO
+### Via Docker Compose
+```
+make run-compose
+```
 
-### Via Docker
-TODO
+### Hybrid Approach
+```
+# Run Postgres as a container
+cd dockerfiles/postgres && make run-local
+cd - && make run
+```
+
+### Sample Data
+You can fill the database with some dummy data 
+```
+make restore-db
+```
 
 ## How to use REST API
-Create a drone
+Create a robot
 ```bash
-curl --location --request POST 'http://localhost:8000/api/v1/robots' \
+curl --location --request POST 'http://localhost:8000/api/v1/robot' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 	"name": "Alpha3"
@@ -46,7 +58,7 @@ curl --location --request POST 'http://localhost:8000/api/v1/robots' \
 
 Record a flight using drone/robot id:
 ```
-curl --location --request POST 'http://localhost:8000/api/v1/flights' \
+curl --location --request POST 'http://localhost:8000/api/v1/flight' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "robotId": "e570b6c0-9bb0-47c9-a358-b984ed402406",
@@ -54,6 +66,11 @@ curl --location --request POST 'http://localhost:8000/api/v1/flights' \
     
 }
 '
+```
+
+Retrieving multiple robots
+```
+curl --location --request GET 'http://localhost:8000/api/v1/robots'
 ```
 
 Retrieving flight logs
@@ -88,6 +105,9 @@ curl --location --request GET 'http://localhost:8000/api/v1/flights?generation=1
   - [ ] API Auth Token
   - [ ] request rate limiting
   - [ ] restricting IP ranges 
+  - [ ] harden docker image
+  - [ ] stronger passwords for DB
+  - [ ] vault-stored credentials 
 - Scalability
   - [ ] streaming when loading CSV
   - [ ] limiting / paginating results
