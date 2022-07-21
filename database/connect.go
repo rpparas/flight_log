@@ -32,10 +32,10 @@ func ConnectDB() {
 		panic("Failed to connect to database")
 	}
 
-	fmt.Println("Connection opened to database")
+	log.Println("Connection opened to database")
 
 	// Migrate the database to the latest schema
 	DB.AutoMigrate(&model.Flight{})
 	DB.AutoMigrate(&model.Robot{})
-	fmt.Println("Database Migrated")
+	log.Println("Database Migrated")
 }

@@ -14,6 +14,11 @@ import (
 	"github.com/rpparas/flight_log/internals/model"
 )
 
+type FlightRecord struct {
+	Flight model.Flight
+	Error  error
+}
+
 // CreateFlight func create a flight
 // @Description Create a flight
 // @Tags Flights
@@ -78,24 +83,28 @@ func CreateFlights(c *fiber.Ctx) error {
 	allErrors := []string{}
 
 	for i, record := range records {
-		flight, rowErrors := constructFlightRecord(record, i)
-		if len(rowErrors) > 0 {
-			continue
-		}
+		// TODO: benchmark this goroutines
+		go func(i int, record []string) {
+			flight, rowErrors := constructFlightRecord(i, record)
+			if len(rowErrors) > 0 {
+				return
+			}
 
-		// TODO: optimize this INSERT query by inserting in batches
-		err = db.Debug().Create(&flight).Error
-		if err != nil {
-			errorMsg := "Row " + strconv.Itoa(i+2) + " was not imported to DB " + err.Error()
-			rowErrors = append(rowErrors, errorMsg)
-		}
+			// TODO: optimize this INSERT query by inserting in batches
+			err = db.Debug().Create(&flight).Error
 
-		allErrors = append(allErrors, rowErrors...)
-		if err != nil {
-			continue
-		}
+			if err != nil {
+				errorMsg := "Row " + strconv.Itoa(i+2) + " was not imported to DB " + err.Error()
+				rowErrors = append(rowErrors, errorMsg)
+			}
 
-		numFlightsSaved += 1
+			allErrors = append(allErrors, rowErrors...)
+			if err != nil {
+				return
+			}
+
+			numFlightsSaved += 1
+		}(i, record)
 	}
 
 	if numFlightsSaved > 0 {
@@ -146,7 +155,7 @@ func readRowsFromCsv(fileName string) ([][]string, error) {
 	return records, nil
 }
 
-func constructFlightRecord(record []string, i int) (model.Flight, []string) {
+func constructFlightRecord(i int, record []string) (model.Flight, []string) {
 	robotId, err := uuid.Parse(record[0])
 	errors := []string{}
 
