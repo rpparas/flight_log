@@ -32,14 +32,6 @@ restore-db:
 ####################### When using Docker #######################
 #################################################################
 
-run-docker-image:
-	docker build -f dockerfiles/golang/Dockerfile \
-		--build-arg BUILD_WORKFLOW=production_code \
-		-t flight_log_prod .
-	docker run -p 8000:8000 flight_log_prod
-
-test-docker-image:
-	docker build -f dockerfiles/golang/Dockerfile \
-		--build-arg BUILD_WORKFLOW=testing_code \
-		-t flight_log_test .
-	docker run flight_log_test
+run-compose:
+	docker network create flight_network || true
+	docker-compose up --build
