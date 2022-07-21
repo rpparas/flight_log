@@ -14,11 +14,11 @@ test:
 test-csv:
 	go test -timeout 30s -run ^TestPostFlightsCsv
 
-docs:
+go-docs:
 	go get -v github.com/swaggo/swag/cmd/swag
 	go get -u github.com/arsmn/fiber-swagger/v2
 	go mod vendor -v
-	swag init -g main.go --output docs --parseDependency --parseInternal
+	swag init --parseDependency
 
 dump-db:
 	pg_dump --file db/flight_log.sql --host localhost \

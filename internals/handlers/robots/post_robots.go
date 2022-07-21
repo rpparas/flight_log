@@ -9,11 +9,11 @@ import (
 
 // CreateRobot func create a robot
 // @Description Create a robot
-// @Tags Robots
+// @Tags Robot
 // @Accept json
 // @Produce json
 // @Success 200 {object} model.Robot
-// @router /api/robots [post]
+// @router /api/robot [post]
 func CreateRobot(c *fiber.Ctx) error {
 	db := database.DB
 	robots := new(model.Robot)

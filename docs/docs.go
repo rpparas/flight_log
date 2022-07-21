@@ -16,54 +16,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/robots": {
-            "get": {
-                "description": "Get all existing robots",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Robots"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Robot"
-                            }
-                        }
-                    }
-                }
-            },
+        "/api/robot": {
             "post": {
                 "description": "Create a robot",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Robots"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Robot"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/robots/{id}": {
-            "get": {
-                "description": "Get one robot by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -78,6 +33,75 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/model.Robot"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/robots": {
+            "get": {
+                "description": "Get multiple robots",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Robot"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Robot"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/flight": {
+            "post": {
+                "description": "Create a flight",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flights"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Flight"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/flight/{id}": {
+            "get": {
+                "description": "Get one flight by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Flight"
                         }
                     }
                 }
@@ -106,11 +130,13 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/flights/csv": {
             "post": {
                 "description": "Create a flight",
                 "consumes": [
-                    "application/json"
+                    "text/csv"
                 ],
                 "produces": [
                     "application/json"
@@ -119,8 +145,8 @@ const docTemplate = `{
                     "Flights"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/model.Flight"
                         }
@@ -128,9 +154,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/flights/{id}": {
+        "/api/v1/robot/{id}": {
             "get": {
-                "description": "Get one flight by ID",
+                "description": "Get one robot by ID",
                 "consumes": [
                     "application/json"
                 ],
