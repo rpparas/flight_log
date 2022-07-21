@@ -1,0 +1,44 @@
+version: "3.5"
+services:
+    postgres:
+        build:
+            context: ./dockerfiles/postgres/
+            dockerfile: Dockerfile
+        restart: always
+        container_name: postgres
+        # environment:
+        #     - POSTGRES_USER=myusername
+        #     - POSTGRES_PASSWORD=mypassword
+        env_file:
+            - .env
+        ports:
+            - 5432:5432
+        volumes: 
+            - /data:/var/lib/postgresql/data
+        networks:
+            - flight_network
+
+    flight_log_api:
+        build:
+            context: .
+            dockerfile: ./dockerfiles/golang/Dockerfile
+        restart: always
+        container_name: flight_log_api
+        ports:
+            - 8000:8000
+        env_file:
+            - .env
+        environment:
+            # override localhost from env, we need to use the docker-compose service name
+            - POSTGRES_HOST=postgres
+        links:
+            - postgres
+        depends_on:
+            - postgres            
+        networks:
+            - flight_network
+        
+networks:
+  flight_network:
+    name: flight_network
+    external: true
