@@ -90,21 +90,21 @@ func TestGetFlights(t *testing.T) {
 			description:     "GET Flights for with invalid generation",
 			route:           "/api/v1/flights?generation=0",
 			expectedError:   false,
-			expectedCode:    422,
+			expectedCode:    400,
 			expectedMessage: "`generation` is not a valid numeric value [1 to 26]",
 		},
 		{
 			description:     "GET Flights for with invalid generation",
 			route:           "/api/v1/flights?generation=99999",
 			expectedError:   false,
-			expectedCode:    422,
+			expectedCode:    400,
 			expectedMessage: "`generation` is not a valid numeric value [1 to 26]",
 		},
 		{
 			description:     "GET Flights for with invalid generation",
 			route:           "/api/v1/flights?generation=not-a-valid-value",
 			expectedError:   false,
-			expectedCode:    422,
+			expectedCode:    400,
 			expectedMessage: "`generation` is not a valid numeric value [1 to 26]",
 		},
 		{
@@ -118,7 +118,7 @@ func TestGetFlights(t *testing.T) {
 			description:     "GET Flights with invalid `from` date",
 			route:           "/api/v1/flights?from=Apr 1 2022",
 			expectedError:   false,
-			expectedCode:    422,
+			expectedCode:    400,
 			expectedMessage: "Invalid date `from` provided. See RFC3339 for valid format",
 		},
 		{
@@ -132,7 +132,7 @@ func TestGetFlights(t *testing.T) {
 			description:     "GET Flights with incompatible `from` & `to` dates",
 			route:           "/api/v1/flights?to=2022-07-01T00:00:00Z&from=2023-07-03T00:00:00Z",
 			expectedError:   false,
-			expectedCode:    422,
+			expectedCode:    400,
 			expectedMessage: "`from` date doesn't come after `to` date",
 		},
 		{
