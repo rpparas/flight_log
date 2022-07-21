@@ -45,23 +45,10 @@ definitions:
     type: object
 info:
   contact: {}
+  version: 1.0.0
+  title: Drone Flight Log API  
 paths:
-  /api/robots:
-    get:
-      consumes:
-      - application/json
-      description: Get all existing robots
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Robot'
-            type: array
-      tags:
-      - Robots
+  /api/robot:
     post:
       consumes:
       - application/json
@@ -74,21 +61,51 @@ paths:
           schema:
             $ref: '#/definitions/model.Robot'
       tags:
-      - Robots
-  /api/robots/{id}:
+      - Robot
+  /api/robots:
     get:
       consumes:
       - application/json
-      description: Get one robot by ID
+      description: Get multiple robots
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Robot'
+            items:
+              $ref: '#/definitions/model.Robot'
+            type: array
       tags:
       - Robot
+  /api/v1/flight:
+    post:
+      consumes:
+      - application/json
+      description: Create a flight
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Flight'
+      tags:
+      - Flights
+  /api/v1/flight/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one flight by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Flight'
+      tags:
+      - Flight
   /api/v1/flights:
     get:
       consumes:
@@ -105,24 +122,25 @@ paths:
             type: array
       tags:
       - Flights
+  /api/v1/flights/csv:
     post:
       consumes:
-      - application/json
+      - text/csv
       description: Create a flight
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/model.Flight'
       tags:
       - Flights
-  /api/v1/flights/{id}:
+  /api/v1/robot/{id}:
     get:
       consumes:
       - application/json
-      description: Get one flight by ID
+      description: Get one robot by ID
       produces:
       - application/json
       responses:
