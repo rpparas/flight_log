@@ -20,7 +20,7 @@ import (
 // @Accept json
 // @Produce json
 // @Success 201 {object} model.Flight
-// @router /api/v1/flights [post]
+// @router /api/v1/flight [post]
 func CreateFlight(c *fiber.Ctx) error {
 	db := database.DB
 	flight := new(model.Flight)
