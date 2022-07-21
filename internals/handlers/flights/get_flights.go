@@ -55,26 +55,26 @@ func GetFlights(c *fiber.Ctx) error {
 
 	generation := parseQueryGeneration(c)
 	if generation == -1 {
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`generation` is not a valid numeric value [1 to 26]", "data": nil})
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "`generation` is not a valid numeric value [1 to 26]", "data": nil})
 	}
 
 	dateFrom, err := parseQueryDateTime(c, "from")
 	if err != nil {
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Invalid date `from` provided. See RFC3339 for valid format", "data": nil})
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Invalid date `from` provided. See RFC3339 for valid format", "data": nil})
 	}
 
 	dateTo, err := parseQueryDateTime(c, "to")
 	if err != nil {
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Invalid date `to` provided. See RFC3339 for valid format", "data": nil})
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Invalid date `to` provided. See RFC3339 for valid format", "data": nil})
 	}
 
 	if !isCompatibleDateRange(dateFrom, dateTo) {
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`from` date doesn't come after `to` date", "data": nil})
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "`from` date doesn't come after `to` date", "data": nil})
 	}
 
 	maxDurationMins := parseQuerymaxDurationMins(c)
 	if maxDurationMins == -1 {
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "`maxDurationMins` should be an integer value [1 to 30]", "data": nil})
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "`maxDurationMins` should be an integer value [1 to 30]", "data": nil})
 	}
 
 	// use scopes to chain conditions based on query strings in URL

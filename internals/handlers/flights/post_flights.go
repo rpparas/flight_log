@@ -28,7 +28,7 @@ func CreateFlight(c *fiber.Ctx) error {
 	// Store the body in the flights and return error if encountered
 	err := c.BodyParser(flight)
 	if err != nil {
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": err.Error() + " Review your input", "data": err})
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": err.Error() + " Review your input", "data": err})
 	}
 
 	// TODO: add error-handling for missing or invalid data in payload
@@ -60,7 +60,7 @@ func CreateFlights(c *fiber.Ctx) error {
 	c.Accepts("text/csv")
 	file, err := c.FormFile("document")
 	if err != nil {
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Missing CSV attachment", "data": nil})
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Missing CSV attachment", "data": nil})
 	}
 	path, err := saveTempFile(c, file)
 	if err != nil {
@@ -69,7 +69,7 @@ func CreateFlights(c *fiber.Ctx) error {
 
 	records, err := readRowsFromCsv(path)
 	if err != nil {
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "Unable to read CSV attachment: " + err.Error(), "data": nil})
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Unable to read CSV attachment: " + err.Error(), "data": nil})
 	}
 
 	// TODO: add validation for records parsed from CSV
@@ -102,8 +102,8 @@ func CreateFlights(c *fiber.Ctx) error {
 		// TODO: show the UUIDs of the flights created & the corresponding row?
 		return c.Status(201).JSON(fiber.Map{"status": "success", "message": fmt.Sprint("Created ", numFlightsSaved, " Flights"), "data": nil, "errors": allErrors})
 	} else {
-		// TODO: determine if we should really use error 422 or something else
-		return c.Status(422).JSON(fiber.Map{"status": "error", "message": "No flights were saved to the database.", "data": nil, "errors": allErrors})
+		// TODO: determine if we should really use error 400 or something else
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "No flights were saved to the database.", "data": nil, "errors": allErrors})
 	}
 
 }
